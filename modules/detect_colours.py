@@ -8,6 +8,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+
 class DetectBlue:
     """
     Detects blue objects from an image.
@@ -43,18 +44,18 @@ class DetectBlue:
         # ↓ BOOTCAMPERS MODIFY BELOW THIS COMMENT ↓
         # ============
 
-        # Convert the image's colour to HSV
-        hsv = ...
+        # Convert the image's color from BGR to HSV
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-        # Set upper and lower bounds for colour detection, this is in HSV
-        lower_blue = ...
-        upper_blue = ...
+        # Set uper and lower bounds for color detection
+        lower_blue = np.array([88, 57, 30])
+        upper_blue = np.array([135, 255, 255])
 
-        # Apply the threshold for the colour detection
-        mask = ...
+        # Makes a binary mask to check if something is blue or if it isn't
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
 
-        # Shows the detected colour from the mask
-        res = ...
+        # Keep only the blue pixels from the original image (everyhing else becomes black)
+        res = cv2.bitwise_and(img, img, mask=mask)
 
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
@@ -109,22 +110,26 @@ class DetectRed:
         # ↓ BOOTCAMPERS MODIFY BELOW THIS COMMENT ↓
         # ============
 
-        # Convert the image's colour to HSV
-        hsv = ...
+        # Convert the image's color from RGB to HSV
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-        # Set upper and lower bounds for colour detection, this is in HSV
-        lower_red = ...
-        upper_red = ...
+        # Set upper and lower bounds for color detection (since red wraps around in HSV, we need two ranges)
+        lower_red1 = np.array([0, 50, 50])
+        upper_red1 = np.array([10, 255, 255])
+        lower_red2 = np.array([170, 50, 50])
+        upper_red2 = np.array([180, 255, 255])
 
-        # Apply the threshold for the colour detection
-        mask = ...
+        # Makes binary masks to check if something is red or if it isn't
+        mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+        mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+        mask = cv2.bitwise_or(mask1, mask2)
 
-        # Shows the detected colour from the mask
-        res = ...
+        # Keep only the red pixels from the original image (everyhing else becomes black)
+        res = cv2.bitwise_and(img, img, mask=mask)
 
-        # Annotate the colour detections
-        # replace the '_' parameter with the appropiate variable
-        contours, _ = cv2.findContours(_, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        # Finds the outlines of all the red shapes
+        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
         # ============
@@ -143,6 +148,7 @@ class DetectRed:
 
         # Include the "return_mask" parameter if statement here, similar to how it is implemented in DetectBlue
         # Tests will not pass if this isn't included!
+        return mask if return_mask else None
 
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
