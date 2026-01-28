@@ -55,7 +55,7 @@ class DetectBlue:
         mask = cv2.inRange(hsv, lower_blue, upper_blue)
 
         # Keep only the blue pixels from the original image (everyhing else becomes black)
-        res = cv2.bitwise_and(img, img, mask=mask)
+        cv2.bitwise_and(img, img, mask=mask)
 
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
@@ -125,7 +125,7 @@ class DetectRed:
         mask = cv2.bitwise_or(mask1, mask2)
 
         # Keep only the red pixels from the original image (everyhing else becomes black)
-        res = cv2.bitwise_and(img, img, mask=mask)
+        cv2.bitwise_and(img, img, mask=mask)
 
         # Finds the outlines of all the red shapes
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
